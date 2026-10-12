@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#eef2f6" />
 <meta name="background-color" content="#f4f6f9" />
 <meta name="mobile-web-app-capable" content="yes" />
@@ -17,21 +17,21 @@
 <style>
 :root{--ease:cubic-bezier(.22,.61,.36,1);--sw:320px}
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0}
-body{overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png") center/cover fixed no-repeat}
+html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9}
+body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}
 button{font:inherit;cursor:pointer}
 html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
-.app{height:100vh;display:grid;grid-template-rows:68px 1fr 72px;animation:fade .38s ease both}
+.app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:transparent;animation:fade .38s ease both}
 .av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580;overflow:hidden}
 .av img{width:100%;height:100%;object-fit:cover;display:block}
 .ai .av{background:linear-gradient(145deg,#6b727c,#23272d);color:#f3f5f8}
-.top{position:relative;height:68px;min-height:68px;width:100%;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(244,248,253,.46));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
+.top{position:relative;height:calc(68px + env(safe-area-inset-top));min-height:calc(68px + env(safe-area-inset-top));width:100%;display:flex;align-items:flex-end;justify-content:center;padding-top:env(safe-area-inset-top);padding-bottom:0;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
 .title{margin:0;padding:0;text-align:center;color:#68737f;font-family:"Great Vibes","Snell Roundhand",cursive,sans-serif;font-size:34px;font-weight:400;line-height:1;text-shadow:0 1px 2px rgba(255,255,255,.9),0 4px 12px rgba(125,135,149,.15);pointer-events:none}
 #menu{position:absolute;left:16px;width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.86);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(218,224,232,.54));box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 12px 26px rgba(125,135,149,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#727c87;transition:opacity .22s ease,transform .22s ease}
 #menu:hover{opacity:.82;transform:translateY(-1px)}
-.main{position:relative;min-height:0;display:grid;grid-template-columns:var(--sw) 1fr;transition:grid-template-columns .34s var(--ease)}
+.main{position:relative;min-height:0;display:grid;grid-template-columns:var(--sw) 1fr;overflow:hidden;transition:grid-template-columns .34s var(--ease)}
 .main.collapsed{grid-template-columns:0 1fr}
 #side{min-width:0;overflow:hidden;border-right:1px solid rgba(208,215,224,.7);background:rgba(255,255,255,.62);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:80;transition:border-color .34s,visibility 0s linear 0s}
 #side.closed{visibility:hidden;border-color:transparent;transition:border-color .34s,visibility 0s linear .34s}
