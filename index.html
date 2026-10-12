@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#eef2f6" />
+<meta name="background-color" content="#f4f6f9" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Welcome Archangel" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="背景/对面头像.jpg" type="image/jpeg" />
+<link rel="apple-touch-icon" href="背景/对面头像.jpg" />
+<title>Welcome Archangel</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+<style>
+:root{--ease:cubic-bezier(.22,.61,.36,1);--sw:320px}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0}
+body{overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png") center/cover fixed no-repeat}
+button{font:inherit;cursor:pointer}
+html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
+.app{height:100vh;display:grid;grid-template-rows:68px 1fr 72px;animation:fade .38s ease both}
+.av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.ai .av{background:linear-gradient(145deg,#6b727c,#23272d);color:#f3f5f8}
+.top{position:relative;height:68px;min-height:68px;width:100%;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(244,248,253,.46));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
+.title{margin:0;padding:0;text-align:center;color:#68737f;font-family:"Great Vibes","Snell Roundhand",cursive,sans-serif;font-size:34px;font-weight:400;line-height:1;text-shadow:0 1px 2px rgba(255,255,255,.9),0 4px 12px rgba(125,135,149,.15);pointer-events:none}
+#menu{position:absolute;left:16px;width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.86);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(218,224,232,.54));box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 12px 26px rgba(125,135,149,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#727c87;transition:opacity .22s ease,transform .22s ease}
+#menu:hover{opacity:.82;transform:translateY(-1px)}
+.main{position:relative;min-height:0;display:grid;grid-template-columns:var(--sw) 1fr;transition:grid-template-columns .34s var(--ease)}
+.main.collapsed{grid-template-columns:0 1fr}
+#side{min-width:0;overflow:hidden;border-right:1px solid rgba(208,215,224,.7);background:rgba(255,255,255,.62);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:80;transition:border-color .34s,visibility 0s linear 0s}
+#side.closed{visibility:hidden;border-color:transparent;transition:border-color .34s,visibility 0s linear .34s}
+.sin{width:var(--sw);padding:16px;height:100%;overflow-y:auto;transition:opacity .3s,transform .34s var(--ease)}
+#side.closed .sin{opacity:0;transform:translateX(-18px)}
+.sin h3{margin:18px 0 10px;font-size:13px;font-weight:700;color:#68727d;text-align:center;letter-spacing:.04em}.sin h3:first-child{margin-top:0}
+.sin label{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:12px;font-weight:600;color:#7a838d}
+.sin label>span{display:inline-block;padding-left:30px}
+.sin input,.sin select{display:block;width:100%;height:38px;padding:0 14px;font-size:13px;color:#414951;border:1px solid rgba(205,212,222,.75);border-radius:20px;outline:0;background:rgba(255,255,255,.8);box-shadow:inset 0 1px 2px rgba(160,170,185,.08);transition:border-color .2s ease,background .2s ease}
+.sin input:focus,.sin select:focus{border-color:#a2afbf;background:#fff}
+.sin .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.sin button{height:36px;padding:0 14px;border:1px solid rgba(205,212,222,.8);border-radius:20px;color:#5d6670;font-size:13px;font-weight:600;white-space:nowrap;background:rgba(255,255,255,.82);box-shadow:0 3px 8px rgba(140,150,165,.1);transition:all .2s ease}
+.sin button:hover{background:#fff;transform:translateY(-1px);box-shadow:0 5px 12px rgba(140,150,165,.18)}
+.sin .full{width:100%}.sin small{display:block;text-align:center;font-size:11px;color:#9aa2ac;margin-top:4px}
+.history-title{margin:14px 0 8px;padding-left:15px;color:#7a838d;font-size:11px;font-weight:600;text-align:left}
+.history-list{display:grid;gap:7px;max-height:190px;overflow-y:auto;padding:0 2px}
+.history-item{width:100%;min-height:36px;padding:0 13px;overflow:hidden;color:#68727d;text-align:left;text-overflow:ellipsis;white-space:nowrap;border:1px solid rgba(205,212,222,.72);border-radius:18px;background:rgba(255,255,255,.52);transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.history-item:hover{background:rgba(255,255,255,.86);border-color:rgba(160,172,187,.82);transform:translateY(-1px)}
+.history-empty{padding:5px 15px;color:#a1a9b3;font-size:11px;text-align:left}
+.abody{white-space:pre-wrap;word-break:break-word}.think p{white-space:pre-wrap}.step.fail .dot circle{animation:none;stroke:#c4002b}
+#chat{min-height:0;overflow-y:auto;padding:18px 24px}
+.hint{margin:0 auto 16px;max-width:520px;text-align:center;font-size:12px;color:#8a929c}
+.enter{animation:fade .4s ease both}
+.head{width:56px;display:flex;flex-direction:column;align-items:center}
+.frame{width:56px;height:56px;padding:3px;border-radius:50%;background:linear-gradient(145deg,#fff,#c4cdd9 55%,#fff);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 10px 22px rgba(120,130,145,.22)}
+.av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580}
+.ai .av{background:linear-gradient(145deg,#6b727c,#23272d);color:#f3f5f8}
+.pill{position:relative;z-index:1;margin-top:-13px;padding:2px 11px;font-size:11px;font-weight:600;line-height:1.4;white-space:nowrap;color:rgba(88,98,108,.92);border:1px solid rgba(255,255,255,.7);border-radius:99px;background:rgba(255,255,255,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.urow{display:flex;justify-content:flex-end;margin-bottom:18px}
+.ucol{position:relative;min-width:min(230px,82%);max-width:min(620px,82%);display:flex;flex-direction:column;align-items:flex-end}
+.ubody{margin:6px 44px 0 0;display:flex;flex-direction:column;align-items:flex-end}.b1{position:relative;max-width:100%}.bubble.more{margin-top:3px}
+.elbow{position:absolute;right:-16px;top:-6px;width:16px;height:calc(50% + 6px);border:1.5px solid #aab3bf;border-width:0 1.5px 1.5px 0;border-bottom-right-radius:9px}
+.bubble{padding:6px 16px;white-space:pre-wrap;word-break:break-word;border:1px solid rgba(213,219,227,.8);border-radius:20px;background:rgba(248,249,251,.9);box-shadow:0 8px 22px rgba(145,153,166,.14)}
+.pending .bubble{border-style:dashed}
+.arow{position:relative;max-width:min(720px,94%);margin-bottom:22px}
+.step{display:flex;align-items:center;height:30px;font-size:14px;color:#8a929c}
+.step svg{flex:none}.step .ic{width:24px;height:24px;padding:4px;margin-right:9px;border-radius:8px;background:#fff;box-shadow:0 2px 6px rgba(130,140,155,.16);fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;color:#aab3bf;transition:all .3s}.step.done .ic{color:#4a525c}.ic .f{fill:currentColor;fill-opacity:.18;stroke:none}
+.step .dot line{stroke:#aab3bf;stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .5s .1s forwards}
+.step .dot circle{fill:#fff;stroke:#aab3bf;stroke-width:1.5;animation:pulse 1s infinite}
+.step.done{color:#5d6670}
+.step.done .dot circle{fill:#4a5058;stroke:#4a5058;animation:none}
+.ahead{display:flex;align-items:flex-start;gap:14px}
+.think{margin:21px 0 0;color:#7b838d}
+.think summary{cursor:pointer;width:max-content;list-style:none;font:400 26px/1.2 "Great Vibes","Snell Roundhand",cursive;color:#6b7682}
+.think summary::-webkit-details-marker{display:none}
+.think p{max-width:min(480px,calc(100vw - 140px));margin:6px 0 0;padding:8px 12px;font-size:13px;border-left:2px solid #c4ccd7;background:rgba(255,255,255,.5);border-radius:0 8px 8px 0}
+.abody{margin:4px 0 10px 56px;padding:6px 16px;border:1px solid rgba(213,219,227,.76);border-radius:20px;background:rgba(255,255,255,.64);box-shadow:0 8px 24px rgba(145,153,166,.12)}
+.cards{margin:0 0 12px 56px;display:grid;gap:3px}
+.card{width:100%;display:flex;align-items:center;gap:10px;padding:5px 14px;text-align:left;border:1px solid #e3e7ee;border-radius:16px;background:#fff;box-shadow:0 4px 12px rgba(130,140,155,.1);transition:box-shadow .2s}
+.card:hover{box-shadow:0 8px 18px rgba(130,140,155,.2)}
+.card b{max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#3e454e}
+.card em{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:normal;font-size:12px;color:#8a929c}
+.card i{flex:none;white-space:nowrap;font-style:normal;font-size:12px;padding:0 10px;border-radius:99px;color:#c4002b;background:#ffe1e6}
+.fitem.ok i{color:#007a33;background:#d9fbe5}
+.fdiff{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s var(--ease)}
+.fitem.open .fdiff{grid-template-rows:1fr}
+.fdiff>div{overflow:hidden}
+.diff{margin-top:3px;overflow:auto;border:1px solid #e3e7ee;border-radius:14px;background:#fff;font:12px/1.7 Consolas,monospace}
+.confirm{max-width:calc(100% - 56px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:56px;height:40px;padding:0 24px;border:0;border-radius:99px;color:#4a525c;font-weight:600;background:rgba(255,255,255,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 18px rgba(130,140,155,.18);transition:background .2s}
+.confirm:hover{background:rgba(255,255,255,.7)}
+.confirm:disabled{opacity:.6;cursor:default}
+.bottom{padding:16px 20px;border-top:1px solid rgba(220,225,232,.7);background:rgba(255,255,255,.48);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10}
+.comp{--w:52px;position:relative;height:40px}
+#prompt{width:calc(100% - var(--w));height:40px;padding:0 calc(var(--w) + 14px) 0 18px;border:0;outline:0;border-radius:99px;color:#414951;background:rgba(255,255,255,.74);box-shadow:0 6px 16px rgba(130,140,155,.1)}
+.act{position:absolute;top:0;right:0;height:40px;display:flex;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 18px rgba(130,140,155,.18)}
+.act button{white-space:nowrap;width:var(--w);border:0;background:transparent;color:#5d6670;font-size:13px;font-weight:600;letter-spacing:.06em;transition:background .2s}
+.act button:hover{background:rgba(255,255,255,.55)}
+.act span{width:1px;margin:10px 0;background:rgba(93,102,112,.28)}
+.ln{display:flex;color:#9aa2ac;white-space:pre}
+.ln span{flex:none;width:28px;text-align:center}
+.ln code{padding-right:14px}
+.ln.del{color:#c4002b;background:#ffe1e6;box-shadow:inset 3px 0 #ff2d55;font-weight:600}
+.ln.add{color:#007a33;background:#d4fbe2;box-shadow:inset 3px 0 #00c853;font-weight:600}
+#toast{position:fixed;left:50%;top:14px;z-index:90;max-width:min(420px,calc(100vw - 140px));padding:7px 18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px;border-radius:99px;background:rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(130,140,153,.22);opacity:0;pointer-events:none;transform:translateX(-50%)}
+#toast.show{animation:toast 2.4s both}
+.mask{flex-wrap:wrap;padding:6px;position:absolute;inset:-4px;z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:18px;background:rgba(236,240,245,.7);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);animation:fade .25s both}
+.mask button,#selbar button{flex:none;white-space:nowrap;height:34px;padding:0 16px;border:0;border-radius:99px;color:#5d6670;font-weight:600;background:rgba(255,255,255,.8);box-shadow:0 6px 14px rgba(130,140,155,.2)}
+#chat{-webkit-touch-callout:none}
+body.sel .urow,body.sel .arow{position:relative;padding-left:30px;cursor:pointer}
+body.sel .urow::before,body.sel .arow::before{content:"";position:absolute;left:0;top:10px;width:20px;height:20px;border-radius:50%;border:1.5px solid #aab3bf;background:rgba(255,255,255,.85)}
+.picked::before{background:#5d6670!important;border-color:#5d6670!important;box-shadow:inset 0 0 0 4px #fff}
+#selbar{position:fixed;left:0;right:0;bottom:0;height:72px;z-index:30;display:none;align-items:center;justify-content:space-between;padding:0 28px;font-size:13px;color:#6d7680;background:rgba(255,255,255,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(220,225,232,.7)}
+body.sel #selbar{display:flex;animation:fade .3s}
+#selbar button{margin-left:8px}
+#seldel{color:#c4002b!important}
+.editing .bubble{outline:2px solid #aab3bf;outline-offset:1px;background:#fff}
+.edone{white-space:nowrap;margin:6px 44px 0 0;height:28px;padding:0 16px;border:0;border-radius:99px;color:#5d6670;font-size:13px;font-weight:600;background:rgba(255,255,255,.8);box-shadow:0 6px 14px rgba(130,140,155,.2)}
+.sidebar-backdrop{display:none}
+@media(max-width:900px){
+  .sidebar-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.22);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:85;opacity:1;visibility:visible;transition:opacity .3s ease,visibility .3s ease}
+  .sidebar-backdrop.closed{opacity:0;visibility:hidden;pointer-events:none}
+}
+.lace-frame{position:fixed;inset:9px;pointer-events:none!important;border:1px solid rgba(255,255,255,.88);border-radius:8px;z-index:15}
+.lace-frame::before{content:"";position:absolute;inset:5px;pointer-events:none!important;border:9px solid transparent;border-radius:8px;background:radial-gradient(circle at 8px 8px,rgba(255,255,255,.94) 0 3px,transparent 3.5px) 0 0/16px 16px,linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) padding-box;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;padding:9px}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes shine{50%{background-position:100% 50%}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pulse{50%{stroke:#4a5058}}
+@keyframes toast{0%{opacity:0}15%,82%{opacity:1}100%{opacity:0}}
+@media(max-width:900px){
+  .main,.main.collapsed{grid-template-columns:1fr}
+  #side{position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);height:100vh;height:100dvh;z-index:90;background:rgba(255,255,255,.68);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);box-shadow:10px 0 32px rgba(120,130,145,.28);transform:translateX(0);transition:transform .34s var(--ease),visibility 0s linear 0s}
+  #side.closed{transform:translateX(-100%);transition:transform .34s var(--ease),visibility 0s linear .34s}
+  .sin{width:100%}
+  #chat{padding:14px 12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar-backdrop closed" id="sideBackdrop"></div>
+  <header class="top">
+    <button id="menu" aria-label="侧边栏">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="glassGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96"></stop>
+            <stop offset="100%" stop-color="#cbd3dd" stop-opacity="0.72"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M5 8.5C5 6.57 6.57 5 8.5 5h7C17.43 5 19 6.57 19 8.5S17.43 12 15.5 12h-7C6.57 12 5 10.43 5 8.5Z" fill="url(#glassGradient)"></path>
+        <path d="M5 15.5C5 13.57 6.57 12 8.5 12h7c1.93 0 3.5 1.57 3.5 3.5S17.43 19 15.5 19h-7C6.57 19 5 17.43 5 15.5Z" fill="none" stroke="#727c87" stroke-width="1.4"></path>
+        <circle cx="8.7" cy="8.5" r="1.4" fill="#727c87"></circle>
+        <circle cx="15.3" cy="15.5" r="1.4" fill="#727c87"></circle>
+      </svg>
+    </button>
+    <div class="title">Welcome Archangel</div>
+  </header>
+  <main class="main collapsed" id="main">
+    <aside class="closed" id="side"><div class="sin">
+<h3>对话</h3>
+<button class="full" id="newChat">新对话</button>
+<div class="history-title">历史对话</div>
+<div class="history-list" id="historyList"></div>
+<h3>GitHub 仓库</h3>
+<label><span>Token</span><input id="gToken" type="password" autocomplete="off" placeholder="ghp_..."></label>
+<label><span>Owner</span><input id="gOwner" placeholder="仓库所有者"></label>
+<label><span>Repository</span><input id="gRepo" placeholder="仓库名称"></label>
+<label><span>Branch</span><input id="gBranch" placeholder="main"></label>
+<div class="row"><button id="gSave">保存</button><button id="gTree">读取文件树</button></div>
+<small id="treeInfo">未读取文件树</small>
+<h3>AI 接口</h3>
+<label><span>API Base URL</span><input id="aBase" placeholder="https://api.openai.com/v1"></label>
+<label><span>API Key</span><input id="aKey" type="password" autocomplete="off" placeholder="sk-..."></label>
+<label><span>模型</span><select id="aModel"><option value="">请先获取模型</option></select></label>
+<div class="row"><button id="aFetch">获取模型</button><button id="aSave">保存</button></div>
+</div></aside>
+    <section id="chat"><div class="hint">先在左侧填好 GitHub 和 AI 设置并读取文件树。发送需求（可连发），再点底栏“调取”开始处理。长按消息可重回、编辑或多选删除。</div></section>
+  </main>
+  <footer class="bottom"><div class="comp">
+    <input id="prompt" type="text" placeholder="告诉 AI 你想修改什么…" />
+    <div class="act"><button id="send">发送</button><span></span><button id="fetch">调取</button></div>
+  </div></footer>
+</div>
+<div id="selbar"><span id="selcount">已选 0 条</span><div><button id="seldel">删除</button><button id="selcancel">取消</button></div></div>
+<div class="lace-frame"></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s), chat=$('#chat'), input=$('#prompt');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+const databaseState={
+  database:null,
+  ready:null
+};
+
+function openDatabase(){
+  if(databaseState.ready){
+    return databaseState.ready;
+  }
+
+  databaseState.ready=new Promise((resolve,reject)=>{
+    const request=indexedDB.open('archangel-database',1);
+
+    request.onupgradeneeded=()=>{
+      const database=request.result;
+
+      if(!database.objectStoreNames.contains('app')){
+        database.createObjectStore('app');
+      }
+
+      if(!database.objectStoreNames.contains('conversations')){
+        database.createObjectStore('conversations',{
+          keyPath:'id'
+        });
+      }
+    };
+
+    request.onsuccess=()=>{
+      databaseState.database=request.result;
+      resolve(databaseState.database);
+    };
+
+    request.onerror=()=>{
+      reject(new Error('IndexedDB 初始化失败'));
+    };
+  });
+
+  return databaseState.ready;
+}
+
+async function databaseGet(storeName,key){
+  const database=await openDatabase();
+
+  return new Promise((resolve,reject)=>{
+    const transaction=database.transaction(storeName,'readonly');
+    const request=transaction.objectStore(storeName).get(key);
+
+    request.onsuccess=()=>{
+      resolve(request.result);
+    };
+
+    request.onerror=()=>{
+      reject(new Error('读取数据库失败'));
+    };
+  });
+}
+
+async function databasePut(storeName,value,key){
+  const database=await openDatabase();
+
+  return new Promise((resolve,reject)=>{
+    const transaction=database.transaction(storeName,'readwrite');
+    const request=key===undefined
+      ? transaction.objectStore(storeName).put(value)
+      : transaction.objectStore(storeName).put(value,key);
+
+    request.onsuccess=()=>{
+      resolve(value);
+    };
+
+    request.onerror=()=>{
+      reject(new Error('写入数据库失败'));
+    };
+  });
+}
+
+async function databaseDelete(storeName,key){
+  const database=await openDatabase();
+
+  return new Promise((resolve,reject)=>{
+    const transaction=database.transaction(storeName,'readwrite');
+    const request=transaction.objectStore(storeName).delete(key);
+
+    request.onsuccess=()=>{
+      resolve();
+    };
+
+    request.onerror=()=>{
+      reject(new Error('删除数据库记录失败'));
+    };
+  });
+}
+
+async function databaseGetAll(storeName){
+  const database=await openDatabase();
+
+  return new Promise((resolve,reject)=>{
+    const transaction=database.transaction(storeName,'readonly');
+    const request=transaction.objectStore(storeName).getAll();
+
+    request.onsuccess=()=>{
+      resolve(request.result||[]);
+    };
+
+    request.onerror=()=>{
+      reject(new Error('读取数据库列表失败'));
+    };
+  });
+}
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const USER_SVG='<img src="背景/我的头像.jpg" alt="我" onerror="this.outerHTML=\'<svg width=\\\'26\\\' height=\\\'26\\\' viewBox=\\\'0 0 24 24\\\'><circle cx=\\\'12\\\' cy=\\\'8.5\\\' r=\\\'4\\\' fill=\\\'currentColor\\\'/><path d=\\\'M4.5 20.2c.9-3.6 3.9-5.7 7.5-5.7s6.6 2.1 7.5 5.7\\\' fill=\\\'currentColor\\\'/></svg>\'" />';
+const AI_SVG='<img src="背景/对面头像.jpg" alt="Archangel" onerror="this.outerHTML=\'<svg width=\\\'26\\\' height=\\\'26\\\' viewBox=\\\'0 0 24 24\\\'><path d=\\\'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\\\' fill=\\\'currentColor\\\'/></svg>\'" />';
+let pending=[];
+let busy=false;
+let currentConversation=null;
+let conversationHistory=loadConversationHistory();
+
+function createConversation(){
+  return {
+    id:`conversation-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    title:'新对话',
+    createdAt:Date.now(),
+    messages:[]
+  };
+}
+
+function loadConversationHistory(){
+  return [];
+}
+
+async function saveConversationHistory(){
+  try{
+    await databasePut('app',{
+      key:'conversation-history',
+      value:conversationHistory
+    });
+  }catch(error){
+    toast(error.message);
+  }
+}
+
+function getConversationTitle(conversation){
+  const firstMessage=conversation.messages.find(message=>message.role==='user');
+
+  if(firstMessage&&firstMessage.text){
+    return firstMessage.text.slice(0,28);
+  }
+
+  return conversation.title;
+}
+
+function saveCurrentConversation(){
+  if(!currentConversation||!currentConversation.messages.length){
+    return;
+  }
+
+  currentConversation.title=getConversationTitle(currentConversation);
+
+  const index=conversationHistory.findIndex(item=>item.id===currentConversation.id);
+
+  if(index===-1){
+    conversationHistory.unshift(currentConversation);
+  }else{
+    conversationHistory[index]=currentConversation;
+  }
+
+  conversationHistory=conversationHistory.slice(0,30);
+  saveConversationHistory();
+  renderConversationHistory();
+}
+
+async function loadStoredConversationHistory(){
+  try{
+    const record=await databaseGet('app','conversation-history');
+
+    if(record&&Array.isArray(record.value)){
+      conversationHistory=record.value;
+      renderConversationHistory();
+    }
+  }catch(error){
+    toast(error.message);
+  }
+}
+
+function renderConversationHistory(){
+  const list=$('#historyList');
+
+  if(!list){
+    return;
+  }
+
+  list.innerHTML='';
+
+  if(!conversationHistory.length){
+    const empty=document.createElement('div');
+    empty.className='history-empty';
+    empty.textContent='暂无历史对话';
+    list.appendChild(empty);
+    return;
+  }
+
+  conversationHistory.forEach(conversation=>{
+    const button=document.createElement('button');
+    button.className='history-item';
+    button.type='button';
+    button.textContent=conversation.title||'未命名对话';
+    button.title=conversation.title||'未命名对话';
+
+    button.addEventListener('click',()=>{
+      openConversation(conversation.id);
+    });
+
+    list.appendChild(button);
+  });
+}
+
+function openConversation(id){
+  const conversation=conversationHistory.find(item=>item.id===id);
+
+  if(!conversation){
+    return;
+  }
+
+  currentConversation=JSON.parse(JSON.stringify(conversation));
+  pending=[];
+  busy=false;
+
+  clearMasks();
+  exitSel();
+
+  chat.innerHTML='';
+
+  const hint=document.createElement('div');
+  hint.className='hint';
+  hint.textContent='历史对话已打开。发送新消息后，点击底栏“调取”继续对话。';
+  chat.appendChild(hint);
+
+  currentConversation.messages.forEach(message=>{
+    if(message.role==='user'){
+      addUser(message.text,false);
+    }else if(message.role==='assistant'){
+      addAssistantHistory(message.text);
+    }else if(message.role==='system'){
+      addSystemHistory(message.text);
+    }
+  });
+
+  renderConversationHistory();
+  scroll();
+
+  if(innerWidth<=900){
+    setSide(false);
+  }
+}
+
+function addAssistantHistory(text){
+  const row=document.createElement('div');
+  row.className='arow ai enter';
+  row.innerHTML=`<div class="ahead">${head(AI_SVG,'Archangel')}</div><div class="abody">${esc(text)}</div>`;
+  chat.appendChild(row);
+}
+
+function addSystemHistory(text){
+  const row=document.createElement('div');
+  row.className='arow enter';
+  row.innerHTML=`<div class="abody">${esc(text)}</div>`;
+  chat.appendChild(row);
+}
+
+function createNewConversation(){
+  saveCurrentConversation();
+  currentConversation=createConversation();
+  pending=[];
+  busy=false;
+
+  clearMasks();
+  exitSel();
+
+  chat.innerHTML='';
+  const hint=document.createElement('div');
+  hint.className='hint';
+  hint.textContent='先发送需求，再点底栏“调取”开始处理。';
+  chat.appendChild(hint);
+
+  renderConversationHistory();
+  toast('已新建对话');
+
+  if(innerWidth<=900){
+    setSide(false);
+  }
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}
+function scroll(){chat.scrollTop=chat.scrollHeight}
+function head(svg,name){return `<div class="head"><div class="frame"><div class="av">${svg}</div></div><div class="pill">${name}</div></div>`}
+function setSide(o){
+  const side=$('#side'), backdrop=$('#sideBackdrop');
+  side.classList.toggle('closed',!o);
+  $('#main').classList.toggle('collapsed',!o);
+  if(backdrop)backdrop.classList.toggle('closed',!o);
+}
+
+async function requestFullscreenFromGesture(){
+  if(document.fullscreenElement){
+    return true;
+  }
+
+  const root=document.documentElement;
+
+  if(!root.requestFullscreen){
+    return false;
+  }
+
+  try{
+    await root.requestFullscreen({
+      navigationUI:'hide'
+    });
+    return true;
+  }catch{
+    return false;
+  }
+}
+
+function bindFullscreenGesture(){
+  const events=['pointerdown','touchstart','click'];
+
+  events.forEach(eventName=>{
+    document.addEventListener(eventName,()=>{
+      requestFullscreenFromGesture();
+    },{
+      passive:true
+    });
+  });
+}
+function toggleSide(e){if(e){e.preventDefault();e.stopPropagation()}setSide($('#side').classList.contains('closed'))}
+$('#menu').addEventListener('click',toggleSide);
+$('#menu').addEventListener('touchend',toggleSide);
+const backdrop=$('#sideBackdrop');
+if(backdrop){
+  backdrop.addEventListener('click',()=>setSide(false));
+  backdrop.addEventListener('touchend',e=>{e.preventDefault();setSide(false)});
+}
+document.addEventListener('click',e=>{if(!$('#side').classList.contains('closed')&&!e.target.closest('#side,#menu'))setSide(false)});
+function addUser(text,saveMessage=true){
+  if(!currentConversation){
+    currentConversation=createConversation();
+  }
+
+  if(saveMessage){
+    currentConversation.messages.push({
+      role:'user',
+      text
+    });
+
+    saveCurrentConversation();
+  }
+
+  const last=chat.lastElementChild;
+
+  if(last&&last.classList.contains('urow')){
+    last.querySelector('.ubody').insertAdjacentHTML('beforeend',`<div class="bubble more enter">${esc(text)}</div>`);
+    scroll();
+    return;
+  }
+
+  const r=document.createElement('div');
+  r.className='urow pending enter';
+  r.innerHTML=`<div class="ucol">${head(USER_SVG,'我')}<div class="ubody"><div class="b1"><div class="elbow"></div><div class="bubble">${esc(text)}</div></div></div></div>`;
+  chat.appendChild(r);
+  pending.push(r);
+  scroll();
+}
+
+function send(){
+  const value=input.value.trim();
+
+  if(!value){
+    return;
+  }
+
+  input.value='';
+  addUser(value,true);
+}
+const K={g:'archangel.github.settings.v3',a:'archangel.api.settings.v3'},LIM=60000;
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}};
+const G=()=>({token:$('#gToken').value.trim(),owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:$('#gBranch').value.trim()||'main'});
+const A=()=>({base:$('#aBase').value.trim().replace(/\/+$/,''),key:$('#aKey').value.trim(),model:$('#aModel').value});
+const ST={tree:[],key:'',files:{}};
+const rk=g=>`${g.owner}/${g.repo}@${g.branch}`;
+const need=g=>{if(!g.token||!g.owner||!g.repo)throw new Error('请先填写 GitHub Token、Owner 和 Repository')};
+const gh=(g,j)=>({Authorization:'Bearer '+g.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(j?{'Content-Type':'application/json'}:{})});
+const base=g=>`https://api.github.com/repos/${encodeURIComponent(g.owner)}/${encodeURIComponent(g.repo)}`;
+const cu=(g,p)=>`${base(g)}/contents/${p.split('/').filter(Boolean).map(encodeURIComponent).join('/')}`;
+async function req(url,o,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||30000);try{return await fetch(url,{...o,signal:c.signal})}catch(e){throw new Error(e.name=='AbortError'?'请求超时，请检查网络或设置':e.message)}finally{clearTimeout(t)}}
+async function err(r){const t=await r.text();try{return JSON.parse(t).message||t}catch{return t||r.status}}
+function b64(t){let s='';new TextEncoder().encode(t).forEach(b=>s+=String.fromCharCode(b));return btoa(s)}
+function unb64(v,p){try{const t=new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(atob(String(v).replace(/\s/g,'')),c=>c.charCodeAt(0)));if(t.includes('\0'))throw 0;return t}catch{throw new Error(p+' 不是 UTF-8 文本文件')}}
+$('#gSave').onclick=()=>{localStorage.setItem(K.g,JSON.stringify(G()));toast('GitHub 设置已保存')};
+$('#aSave').onclick=()=>{localStorage.setItem(K.a,JSON.stringify(A()));toast('API 设置已保存')};
+$('#aModel').onchange=()=>$('#aSave').click();
+$('#newChat').onclick=createNewConversation;
+async function loadTree(){
+  const g=G();need(g);localStorage.setItem(K.g,JSON.stringify(g));
+  const r=await req(`${base(g)}/git/trees/${encodeURIComponent(g.branch)}?recursive=1`,{headers:gh(g)});
+  if(!r.ok)throw new Error('读取仓库失败：'+await err(r));
+  const d=await r.json();if(!Array.isArray(d.tree))throw new Error('GitHub 没有返回有效的文件树');
+  if(ST.key!==rk(g)){ST.files={};ST.key=rk(g)}
+  ST.tree=d.tree.filter(x=>x.type=='blob').map(x=>({path:x.path,size:x.size||0})).sort((a,b)=>a.path.localeCompare(b.path));
+  $('#treeInfo').textContent=`已读取 ${ST.tree.length} 个文件`+(d.truncated?'（仓库过大，部分未显示）':'');
+}
+$('#gTree').onclick=async()=>{const b=$('#gTree');b.disabled=true;try{await loadTree();toast('文件树已读取')}catch(e){toast(e.message)}b.disabled=false};
+$('#aFetch').onclick=async()=>{
+  const a=A();if(!a.base||!a.key)return toast('请先填写 Base URL 和 Key');
+  try{const r=await req(a.base+'/models',{headers:{Authorization:'Bearer '+a.key}});if(!r.ok)throw new Error('获取模型失败：'+await err(r));
+    const m=((await r.json()).data||[]).map(x=>x.id).sort();if(!m.length)throw new Error('接口没有返回模型');
+    $('#aModel').innerHTML=m.map(x=>`<option>${esc(String(x))}</option>`).join('');localStorage.setItem(K.a,JSON.stringify(A()));toast(`已获取 ${m.length} 个模型`)}catch(e){toast(e.message)}
+};
+(()=>{const g=ld(K.g,{}),a=ld(K.a,{});
+  $('#gToken').value=g.token||'';$('#gOwner').value=g.owner||'';$('#gRepo').value=g.repo||'';$('#gBranch').value=g.branch||'main';
+  $('#aBase').value=a.base||'https://api.openai.com/v1';$('#aKey').value=a.key||'';
+  if(a.model)$('#aModel').innerHTML=`<option>${esc(a.model)}</option>`;})();
+async function ai(msgs){
+  const a=A();if(!a.base||!a.key||!a.model)throw new Error('请先填写 API 设置并选择模型');
+  const go=j=>req(a.base+'/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+a.key,'Content-Type':'application/json'},body:JSON.stringify({model:a.model,messages:msgs,temperature:.15,...(j?{response_format:{type:'json_object'}}:{})})},120000);
+  let r=await go(true);if(!r.ok)r=await go(false);
+  if(!r.ok)throw new Error('AI 请求失败：'+await err(r));
+  const m=(await r.json()).choices?.[0]?.message;if(!m)throw new Error('AI 没有返回内容');
+  return Array.isArray(m.content)?m.content.map(p=>p.text||'').join(''):m.content||'';
+}
+function pj(t){const c=String(t||'').trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');try{return JSON.parse(c)}catch{const i=c.indexOf('{'),j=c.lastIndexOf('}');if(i<0||j<=i)throw new Error('AI 返回的不是有效 JSON');return JSON.parse(c.slice(i,j+1))}}
+async function getFile(path){
+  const g=G();need(g);if(ST.key!==rk(g))throw new Error('仓库设置已改变，请重新读取文件树');
+  if(ST.files[path])return ST.files[path];
+  let r=await req(cu(g,path)+'?ref='+encodeURIComponent(g.branch),{headers:gh(g)});
+  if(!r.ok)throw new Error(`读取 ${path} 失败：`+await err(r));
+  let d=await r.json();if(Array.isArray(d)||(d.type&&d.type!='file'))throw new Error(path+' 不是普通文件');
+  if(!(d.encoding=='base64'&&typeof d.content=='string')){
+    r=await req(`${base(g)}/git/blobs/${d.sha}`,{headers:gh(g)},60000);
+    if(!r.ok)throw new Error(`读取 ${path} 失败：`+await err(r));d=Object.assign({},d,await r.json())}
+  return ST.files[path]={path,sha:d.sha,orig:unb64(d.content,path)};
+}
+function diff(a,b){
+  a=a.split('\n');b=b.split('\n');let i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;
+  let x=a.length,y=b.length;while(x>i&&y>i&&a[x-1]===b[y-1]){x--;y--}
+  const P=a.slice(i,x),Q=b.slice(i,y),n=P.length,m=Q.length;let mid=[];
+  if(n*m>4e6)mid=[...P.map(s=>['-',s]),...Q.map(s=>['+',s])];
+  else{const L=Array.from({length:n+1},()=>new Uint16Array(m+1));
+    for(let p=n-1;p>=0;p--)for(let q=m-1;q>=0;q--)L[p][q]=P[p]===Q[q]?L[p+1][q+1]+1:Math.max(L[p+1][q],L[p][q+1]);
+    let p=0,q=0;while(p<n&&q<m){if(P[p]===Q[q]){mid.push([' ',P[p]]);p++;q++}else if(L[p+1][q]>=L[p][q+1])mid.push(['-',P[p++]]);else mid.push(['+',Q[q++]])}
+    while(p<n)mid.push(['-',P[p++]]);while(q<m)mid.push(['+',Q[q++]])}
+  return[...a.slice(Math.max(0,i-3),i).map(s=>[' ',s]),...mid,...a.slice(x,x+3).map(s=>[' ',s])];
+}
+const IC=['<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>','<path class="f" d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M9 13.2l2.2 2.2L15.5 11"/>','<path class="f" d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>','<path d="M8.5 8l-4 4 4 4M15.5 8l4 4-4 4M13.2 6.5l-2.4 11"/><path d="M19 2.5v3M17.5 4h3"/>'];
+async function run(){
+  if(busy)return toast('对面正在回复，请稍候');
+  if(!pending.length)return toast('先发送需求，再点调取');
+  const rows=pending;pending=[];busy=true;rows.forEach(r=>r.classList.remove('pending'));
+  const text=rows.flatMap(r=>[...r.querySelectorAll('.bubble')].map(b=>b.textContent.trim())).filter(Boolean).join('\n');
+  const box=document.createElement('div');box.className='arow ai enter';
+  box.innerHTML=`<div class="ahead">${head(AI_SVG,'Archangel')}<details class="think"><summary>Thinking…</summary><p>正在思考…</p></details></div><div class="steps"></div>`;
+  chat.appendChild(box);const steps=box.querySelector('.steps'),tp=box.querySelector('.think p');
+  const step=(i,t)=>{const s=document.createElement('div');s.className='step';
+    s.innerHTML=`<svg class="dot" width="56" height="30" viewBox="0 0 56 30"><line x1="28" y1="0" x2="28" y2="30" pathLength="1"/><circle cx="28" cy="15" r="3"/></svg><svg class="ic" viewBox="0 0 24 24">${IC[i]}</svg><span>${t}</span>`;
+    steps.appendChild(s);scroll();return x=>{s.classList.add('done');if(x)s.querySelector('span').textContent=t+' · '+x}};
+  const say=h=>{box.insertAdjacentHTML('beforeend',h);scroll()};
+  try{
+    const a=A();if(!a.key||!a.model)throw new Error('请先在左侧填写 API 设置并选择模型');
+    let d=step(0,'分析你的需求');
+    if(!ST.tree.length)await loadTree();if(!ST.tree.length)throw new Error('仓库文件树为空');
+    d();d=step(1,'选择相关文件');
+    const sel=pj(await ai([{role:'system',content:['你是谨慎的代码仓库修改助手。','根据用户需求，从文件列表里选出真正相关的文件，只能选列表中存在的路径，最多 6 个。','只返回 JSON：{"thinking":"用 2-4 句话说明你的分析思路","files":[{"path":"真实路径","reason":"选择原因"}]}'].join('\n')},{role:'user',content:`用户需求：\n${text}\n\n仓库文件列表：\n${ST.tree.map(f=>`${f.path} | ${f.size} bytes`).join('\n')}`}]));
+    tp.textContent=sel.thinking||'已完成分析。';
+    const valid=new Set(ST.tree.map(f=>f.path)),seen=new Set(),pick=[];
+    (sel.files||[]).forEach(f=>{const p=String(f&&f.path||'').trim().replace(/^\/+/,'');if(valid.has(p)&&!seen.has(p)&&pick.length<6){seen.add(p);pick.push({path:p,why:String(f.reason||'与需求相关')})}});
+    if(!pick.length)throw new Error('没有找到足够相关的文件，请把需求描述得更具体些');
+    d(pick.length+' 个');d=step(2,'查看文件内容');
+    const got=[];
+    for(const f of pick){try{const x=await getFile(f.path);if(x.orig.length>LIM){tp.textContent+=`\n（${f.path} 过大，已跳过）`;continue}got.push({...x,why:f.why})}catch(e){tp.textContent+=`\n（跳过 ${f.path}：${e.message}）`}}
+    if(!got.length)throw new Error('相关文件读取失败或过大，无法安全修改');
+    d(got.length+' 个');d=step(3,'生成修改内容');
+    const mod=pj(await ai([{role:'system',content:['你是一个专业代码修改助手。','根据用户需求修改提供的文件，只修改真正需要修改的文件。','必须保留原文件的完整内容，不能用省略号、占位符或说明文字代替代码。','不要返回 Markdown 代码围栏，只返回 JSON：{"reply":"修改说明","files":[{"path":"真实文件路径","content":"修改后的完整文件内容"}]}','files 只放发生修改的文件，content 必须是完整可直接保存的内容。'].join('\n')},{role:'user',content:`用户需求：\n${text}\n\n需要检查和修改的文件：\n${got.map(f=>`===== FILE: ${f.path} =====\n${f.orig}\n===== END FILE =====`).join('\n\n')}`}]));
+    const ch=[];
+    (mod.files||[]).forEach(c=>{const p=String(c&&c.path||'').trim().replace(/^\/+/,''),f=got.find(x=>x.path==p);
+      if(!f||typeof c.content!='string'||!c.content)return;
+      const lf=c.content.replace(/\r\n/g,'\n'),t=f.orig.includes('\r\n')?lf.replace(/\n/g,'\r\n'):lf;
+      if(t!==f.orig)ch.push({...f,edit:t,lines:diff(f.orig.replace(/\r\n/g,'\n'),lf)})});
+    d(ch.length+' 个文件');
+
+    const assistantReply=String(mod.reply||'已生成修改。');
+
+    if(!ch.length){
+      const noChangeReply='我读取了相关文件，但没有生成可以安全应用的修改，可以把需求描述得更具体些。';
+
+      say(`<div class="abody">${esc(noChangeReply)}</div>`);
+
+      if(currentConversation){
+        currentConversation.messages.push({
+          role:'assistant',
+          text:noChangeReply
+        });
+        saveCurrentConversation();
+      }
+
+      busy=false;
+      return;
+    }
+
+    const fullReply=`${assistantReply}
+
+共修改 ${ch.length} 个文件，点开卡片查看改动（红色是删除，绿色是新增）。确认后才会一起上传到 GitHub。`;
+
+    say(`<div class="abody">${esc(fullReply)}</div><div class="cards"></div><button class="confirm">确认修改，一起上传到 GitHub</button>`);
+
+    if(currentConversation){
+      currentConversation.messages.push({
+        role:'assistant',
+        text:fullReply
+      });
+      saveCurrentConversation();
+    }
+    const cards=box.querySelector('.cards');
+    ch.forEach(f=>{const w=document.createElement('div');w.className='fitem';
+      const k=f.lines.filter(l=>l[0]=='+').length;
+      w.innerHTML=`<button class="card"><b>${esc(f.path)}</b><em>${esc(f.why)}</em><i>${k} 行新增</i></button><div class="fdiff"><div><div class="diff">${f.lines.map(([t,x])=>`<div class="ln ${t=='-'?'del':t=='+'?'add':''}"><span>${t=='-'?'−':t=='+'?'+':''}</span><code>${esc(x)}</code></div>`).join('')}</div></div></div>`;
+      w.querySelector('.card').onclick=()=>w.classList.toggle('open');cards.appendChild(w);f.w=w});
+    const btn=box.querySelector('.confirm');
+    btn.onclick=async()=>{
+      btn.disabled=true;const g=G();
+      try{
+        need(g);if(ST.key!==rk(g))throw new Error('仓库设置已改变，请重新读取文件树');
+        for(const f of ch){
+          if(f.w.classList.contains('ok'))continue;
+          btn.textContent='上传中：'+f.path;
+          const r=await req(cu(g,f.path),{method:'PUT',headers:gh(g,true),body:JSON.stringify({message:`Update ${f.path} from Archangel AI`,content:b64(f.edit),branch:g.branch,sha:f.sha})});
+          if(!r.ok)throw new Error(`上传 ${f.path} 失败：`+await err(r));
+          const j=await r.json();f.sha=(j.content&&j.content.sha)||f.sha;
+          if(ST.files[f.path]){ST.files[f.path].sha=f.sha;ST.files[f.path].orig=f.edit}
+          f.w.classList.add('ok');f.w.querySelector('i').textContent='已上传';
+        }
+        btn.textContent='已全部上传';toast('已上传到 GitHub');
+      }catch(e){btn.disabled=false;btn.textContent='重试上传';toast(e.message);say(`<div class="abody">${esc(e.message)}</div>`)}
+    };
+    scroll();
+  }catch(e){
+    box.querySelectorAll('.step:not(.done)').forEach(x=>x.classList.add('fail'));
+    say(`<div class="abody">操作失败：${esc(e.message)}</div>`);toast(e.message);
+  }
+  busy=false;
+}
+let lpT,lpX=0,lpY=0,lpAt=0;
+const IS=()=>document.body.classList.contains('sel');
+function clearMasks(){document.querySelectorAll('.mask').forEach(m=>m.remove())}
+function showMask(b){
+  clearMasks();const m=document.createElement('div');m.className='mask';
+  m.innerHTML='<button data-a="back">重回</button>'+(b.classList.contains('urow')?'<button data-a="edit">编辑</button>':'')+'<button data-a="multi">多选删除</button>';
+  (b.querySelector('.ucol')||b).appendChild(m);
+  m.onclick=e=>{const a=e.target.dataset.a;if(!a)return;clearMasks();if(a=='back')rewind(b);else if(a=='edit')editRow(b);else enterSel(b)};
+}
+function editRow(b){
+  const bs=b.querySelectorAll('.bubble');b.classList.add('editing');
+  bs.forEach(x=>x.contentEditable='true');bs[0].focus();
+  const d=document.createElement('button');d.className='edone';d.textContent='完成';
+  d.onclick=()=>{bs.forEach(x=>x.contentEditable='false');b.classList.remove('editing');d.remove();toast('已修改，点“重回”可按新内容重新回复')};
+  b.querySelector('.ucol').appendChild(d);
+}
+function mark(r){if(!pending.includes(r)){r.classList.add('pending');pending.push(r)}}
+function rewind(b){
+  if(busy)return toast('对面正在回复，请稍候');
+  let n=b.nextElementSibling;
+  while(n){const x=n.nextElementSibling;pending=pending.filter(r=>r!==n);n.remove();n=x}
+  if(b.classList.contains('arow')){const p=b.previousElementSibling;pending=pending.filter(r=>r!==b);b.remove();if(p&&p.classList.contains('urow'))mark(p)}
+  else mark(b);
+  scroll();run();
+}
+function upd(){$('#selcount').textContent='已选 '+document.querySelectorAll('.picked').length+' 条'}
+function enterSel(b){document.body.classList.add('sel');b.classList.add('picked');upd()}
+function exitSel(){document.body.classList.remove('sel');document.querySelectorAll('.picked').forEach(x=>x.classList.remove('picked'))}
+$('#seldel').onclick=()=>{document.querySelectorAll('.picked').forEach(x=>{pending=pending.filter(r=>r!==x);x.remove()});exitSel();toast('已删除')};
+$('#selcancel').onclick=exitSel;
+chat.addEventListener('pointerdown',e=>{
+  if(IS()||e.target.closest('.mask,.editing'))return;
+  const b=e.target.closest('.urow,.arow');if(!b)return;
+  lpX=e.clientX;lpY=e.clientY;lpT=setTimeout(()=>{lpAt=Date.now();showMask(b)},550);
+});
+const stopLP=()=>clearTimeout(lpT);
+['pointerup','pointercancel','pointerleave'].forEach(t=>chat.addEventListener(t,stopLP));
+chat.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-lpX)>8||Math.abs(e.clientY-lpY)>8)stopLP()});
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,[contenteditable=true]'))e.preventDefault()});
+document.addEventListener('dragstart',e=>e.preventDefault());
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('click',e=>{
+  if(Date.now()-lpAt<500){e.stopPropagation();e.preventDefault();return}
+  if(IS()){const b=e.target.closest('.urow,.arow');if(b&&chat.contains(b)){e.stopPropagation();e.preventDefault();b.classList.toggle('picked');upd()}return}
+  if(!e.target.closest('.mask'))clearMasks();
+},true);
+document.addEventListener('keydown',e=>{if(e.key=='Escape'){clearMasks();exitSel()}});
+$('#send').onclick=send;$('#fetch').onclick=run;
+input.addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.isComposing){e.preventDefault();send()}});
+async function registerProgressiveWebApp(){
+  if(!('serviceWorker' in navigator)){
+    return;
+  }
+
+  try{
+    await navigator.serviceWorker.register('sw.js',{
+      scope:'./'
+    });
+  }catch(error){
+    toast('PWA 缓存注册失败');
+    console.error(error);
+  }
+}
+
+async function bootApplication(){
+  if(!currentConversation){
+    currentConversation=createConversation();
+  }
+
+  renderConversationHistory();
+  setSide(false);
+  bindFullscreenGesture();
+  registerProgressiveWebApp();
+
+  try{
+    await openDatabase();
+    await loadStoredConversationHistory();
+  }catch(error){
+    toast(error.message);
+  }
+}
+
+bootApplication();
+</script>
+</body>
+</html>
