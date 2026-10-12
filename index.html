@@ -19,10 +19,6 @@
 *{box-sizing:border-box}
 html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9}
 body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}
-html:fullscreen,body:fullscreen{width:100%;height:100%;min-height:100%;background-color:#f4f6f9}
-html:-webkit-full-screen,body:-webkit-full-screen{width:100%;height:100%;min-height:100%;background-color:#f4f6f9}
-button{font:inherit;cursor:pointer}
-html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
 .app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding:0;background:transparent;animation:fade .38s ease both}
@@ -499,56 +495,12 @@ function setSide(o){
   if(backdrop)backdrop.classList.toggle('closed',!o);
 }
 
-async function requestFullscreenFromGesture(){
-  if(document.fullscreenElement){
-    return true;
-  }
-
-  const root=document.documentElement;
-
-  if(!root.requestFullscreen){
-    return false;
-  }
-
-  try{
-    document.documentElement.classList.add('fullscreen-requesting');
-
-    await root.requestFullscreen({
-      navigationUI:'hide'
-    });
-
-    document.documentElement.classList.add('is-fullscreen');
-    document.body.classList.add('is-fullscreen');
-    return true;
-  }catch{
-    document.documentElement.classList.remove('fullscreen-requesting');
-    document.documentElement.classList.remove('is-fullscreen');
-    document.body.classList.remove('is-fullscreen');
-    return false;
-  }
+function requestFullscreenFromGesture(){
+  return Promise.resolve(false);
 }
 
-document.addEventListener('fullscreenchange',()=>{
-  const active=Boolean(document.fullscreenElement);
-
-  document.documentElement.classList.toggle('is-fullscreen',active);
-  document.body.classList.toggle('is-fullscreen',active);
-
-  if(!active){
-    document.documentElement.classList.remove('fullscreen-requesting');
-  }
-});
-
 function bindFullscreenGesture(){
-  const events=['pointerdown','touchstart','click'];
-
-  events.forEach(eventName=>{
-    document.addEventListener(eventName,()=>{
-      requestFullscreenFromGesture();
-    },{
-      passive:true
-    });
-  });
+  return;
 }
 function toggleSide(e){if(e){e.preventDefault();e.stopPropagation()}setSide($('#side').classList.contains('closed'))}
 $('#menu').addEventListener('click',toggleSide);
@@ -836,7 +788,6 @@ async function bootApplication(){
 
   renderConversationHistory();
   setSide(false);
-  bindFullscreenGesture();
   registerProgressiveWebApp();
 
   try{
