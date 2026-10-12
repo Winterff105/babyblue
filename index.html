@@ -7,7 +7,10 @@
 <meta name="background-color" content="#f4f6f9" />
 <meta name="mobile-web-app-capable" content="no" />
 <meta name="apple-mobile-web-app-capable" content="no" />
-<link rel="manifest" href="manifest.json" />
+<meta name="x5-fullscreen" content="false" />
+<meta name="full-screen" content="no" />
+<meta name="browsermode" content="normal" />
+<meta name="x5-page-mode" content="default" />
 <link rel="icon" href="背景/对面头像.jpg" type="image/jpeg" />
 <link rel="apple-touch-icon" href="背景/对面头像.jpg" />
 <title>Welcome Archangel</title>
@@ -489,11 +492,22 @@ function setSide(o){
   if(backdrop)backdrop.classList.toggle('closed',!o);
 }
 
-(function disableAllFullscreen(){
-  const forceExit = () => {
+(function purgeServiceWorkerAndFullscreen(){
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      for (const r of regs) r.unregister();
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      for (const k of keys) caches.delete(k);
+    });
+  }
+
+  const exit = () => {
     try {
       if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-        if (document.exitFullscreen) document.exitFullscreen();
+        if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
         else if (document.msExitFullscreen) document.msExitFullscreen();
@@ -501,43 +515,26 @@ function setSide(o){
     } catch(e) {}
   };
 
-  const noop = () => {
-    forceExit();
+  const block = (e) => {
+    exit();
     return Promise.reject(new Error("Fullscreen disabled"));
   };
 
   try {
-    Element.prototype.requestFullscreen = noop;
-    Element.prototype.webkitRequestFullscreen = noop;
-    Element.prototype.mozRequestFullScreen = noop;
-    Element.prototype.msRequestFullscreen = noop;
-    Document.prototype.requestFullscreen = noop;
+    Element.prototype.requestFullscreen = block;
+    Element.prototype.webkitRequestFullscreen = block;
+    Element.prototype.mozRequestFullScreen = block;
+    Element.prototype.msRequestFullscreen = block;
+    Document.prototype.requestFullscreen = block;
   } catch(e) {}
 
-  window.addEventListener('load', forceExit);
-  document.addEventListener('fullscreenchange', forceExit);
-  document.addEventListener('webkitfullscreenchange', forceExit);
-  document.addEventListener('pointerdown', forceExit, { passive: true });
-  document.addEventListener('touchstart', forceExit, { passive: true });
-
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', (e) => {
-    forceExit();
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      e.preventDefault();
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
+  window.addEventListener('touchstart', exit, { capture: true, passive: true });
+  window.addEventListener('pointerdown', exit, { capture: true, passive: true });
+  window.addEventListener('click', exit, { capture: true, passive: true });
+  document.addEventListener('fullscreenchange', exit);
+  document.addEventListener('webkitfullscreenchange', exit);
 })();
 
-function requestFullscreenFromGesture(){
-  return Promise.resolve(false);
-}
-
-function bindFullscreenGesture(){
-  return;
-}
 function toggleSide(e){if(e){e.preventDefault();e.stopPropagation()}setSide($('#side').classList.contains('closed'))}
 $('#menu').addEventListener('click',toggleSide);
 $('#menu').addEventListener('touchend',toggleSide);
@@ -802,21 +799,6 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{if(e.key=='Escape'){clearMasks();exitSel()}});
 $('#send').onclick=send;$('#fetch').onclick=run;
 input.addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.isComposing){e.preventDefault();send()}});
-async function registerProgressiveWebApp(){
-  if(!('serviceWorker' in navigator)){
-    return;
-  }
-
-  try{
-    await navigator.serviceWorker.register('sw.js',{
-      scope:'./'
-    });
-  }catch(error){
-    toast('PWA 缓存注册失败');
-    console.error(error);
-  }
-}
-
 async function bootApplication(){
   if(!currentConversation){
     currentConversation=createConversation();
@@ -824,7 +806,6 @@ async function bootApplication(){
 
   renderConversationHistory();
   setSide(false);
-  registerProgressiveWebApp();
 
   try{
     await openDatabase();
