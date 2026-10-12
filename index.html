@@ -2,13 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#eef2f6" />
 <meta name="background-color" content="#f4f6f9" />
 <meta name="mobile-web-app-capable" content="no" />
-<meta name="apple-mobile-web-app-capable" content="no" />
-<meta name="x5-fullscreen" content="false" />
-<meta name="full-screen" content="no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="x5-fullscreen" content="true" />
+<meta name="full-screen" content="yes" />
 <meta name="browsermode" content="normal" />
 <meta name="x5-page-mode" content="default" />
 <link rel="icon" href="背景/对面头像.jpg" type="image/jpeg" />
@@ -21,11 +22,11 @@
 html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9;touch-action:pan-x pan-y}
 body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
-.app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding:0;background:transparent;animation:fade .38s ease both}
+.app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:calc(68px + env(safe-area-inset-top,0px)) 1fr calc(72px + env(safe-area-inset-bottom,0px));padding:0;background:transparent;animation:fade .38s ease both}
 .av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580;overflow:hidden}
 .av img{width:100%;height:100%;object-fit:cover;display:block}
 .ai .av{background:linear-gradient(145deg,#6b727c,#23272d);color:#f3f5f8}
-.top{position:relative;height:68px;min-height:68px;width:100%;display:flex;align-items:center;justify-content:center;padding:0;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
+.top{position:relative;height:calc(68px + env(safe-area-inset-top,0px));min-height:calc(68px + env(safe-area-inset-top,0px));width:100%;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0px) 0 0;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
 .title{margin:0;padding:0;text-align:center;color:#68737f;font-family:"Great Vibes","Snell Roundhand",cursive,sans-serif;font-size:34px;font-weight:400;line-height:1;text-shadow:0 1px 2px rgba(255,255,255,.9),0 4px 12px rgba(125,135,149,.15);pointer-events:none}
 #menu{position:absolute;left:16px;width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.86);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(218,224,232,.54));box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 12px 26px rgba(125,135,149,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#727c87;transition:opacity .22s ease,transform .22s ease}
 #menu:hover{opacity:.82;transform:translateY(-1px)}
@@ -33,7 +34,7 @@ input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
 .main.collapsed{grid-template-columns:0 1fr}
 #side{min-width:0;overflow:hidden;border-right:1px solid rgba(208,215,224,.7);background:rgba(255,255,255,.62);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:80;transition:border-color .34s,visibility 0s linear 0s}
 #side.closed{visibility:hidden;border-color:transparent;transition:border-color .34s,visibility 0s linear .34s}
-.sin{width:var(--sw);padding:16px;height:100%;overflow-y:auto;transition:opacity .3s,transform .34s var(--ease)}
+.sin{width:var(--sw);padding:calc(16px + env(safe-area-inset-top,0px)) 16px 16px;height:100%;overflow-y:auto;transition:opacity .3s,transform .34s var(--ease)}
 #side.closed .sin{opacity:0;transform:translateX(-18px)}
 .sin h3{margin:18px 0 10px;font-size:13px;font-weight:700;color:#68727d;text-align:center;letter-spacing:.04em}.sin h3:first-child{margin-top:0}
 .sin label{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:12px;font-weight:600;color:#7a838d}
@@ -91,7 +92,7 @@ input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
 .confirm{max-width:calc(100% - 56px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:56px;height:40px;padding:0 24px;border:0;border-radius:99px;color:#4a525c;font-weight:600;background:rgba(255,255,255,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 18px rgba(130,140,155,.18);transition:background .2s}
 .confirm:hover{background:rgba(255,255,255,.7)}
 .confirm:disabled{opacity:.6;cursor:default}
-.bottom{padding:16px 20px;border-top:1px solid rgba(220,225,232,.7);background:rgba(255,255,255,.48);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10}
+.bottom{padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(220,225,232,.7);background:rgba(255,255,255,.48);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10}
 .comp{--w:52px;position:relative;height:40px}
 #prompt{width:calc(100% - var(--w));height:40px;padding:0 calc(var(--w) + 14px) 0 18px;border:0;outline:0;border-radius:99px;color:#414951;background:rgba(255,255,255,.74);box-shadow:0 6px 16px rgba(130,140,155,.1)}
 .act{position:absolute;top:0;right:0;height:40px;display:flex;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 18px rgba(130,140,155,.18)}
@@ -504,35 +505,6 @@ function setSide(o){
     });
   }
 
-  const exit = () => {
-    try {
-      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-        if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
-      }
-    } catch(e) {}
-  };
-
-  const block = (e) => {
-    exit();
-    return Promise.reject(new Error("Fullscreen disabled"));
-  };
-
-  try {
-    Element.prototype.requestFullscreen = block;
-    Element.prototype.webkitRequestFullscreen = block;
-    Element.prototype.mozRequestFullScreen = block;
-    Element.prototype.msRequestFullscreen = block;
-    Document.prototype.requestFullscreen = block;
-  } catch(e) {}
-
-  window.addEventListener('touchstart', exit, { capture: true, passive: true });
-  window.addEventListener('pointerdown', exit, { capture: true, passive: true });
-  window.addEventListener('click', exit, { capture: true, passive: true });
-  document.addEventListener('fullscreenchange', exit);
-  document.addEventListener('webkitfullscreenchange', exit);
 })();
 
 function toggleSide(e){if(e){e.preventDefault();e.stopPropagation()}setSide($('#side').classList.contains('closed'))}
