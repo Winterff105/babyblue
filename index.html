@@ -490,7 +490,22 @@ function setSide(o){
 }
 
 (function disableAllFullscreen(){
-  const noop = () => Promise.reject(new Error("Fullscreen disabled"));
+  const forceExit = () => {
+    try {
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
+    } catch(e) {}
+  };
+
+  const noop = () => {
+    forceExit();
+    return Promise.reject(new Error("Fullscreen disabled"));
+  };
+
   try {
     Element.prototype.requestFullscreen = noop;
     Element.prototype.webkitRequestFullscreen = noop;
@@ -498,8 +513,16 @@ function setSide(o){
     Element.prototype.msRequestFullscreen = noop;
     Document.prototype.requestFullscreen = noop;
   } catch(e) {}
+
+  window.addEventListener('load', forceExit);
+  document.addEventListener('fullscreenchange', forceExit);
+  document.addEventListener('webkitfullscreenchange', forceExit);
+  document.addEventListener('pointerdown', forceExit, { passive: true });
+  document.addEventListener('touchstart', forceExit, { passive: true });
+
   let lastTouchEnd = 0;
   document.addEventListener('touchend', (e) => {
+    forceExit();
     const now = Date.now();
     if (now - lastTouchEnd <= 300) {
       e.preventDefault();
