@@ -2,13 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#eef2f6" />
 <meta name="background-color" content="#f4f6f9" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Welcome Archangel" />
+<meta name="mobile-web-app-capable" content="no" />
+<meta name="apple-mobile-web-app-capable" content="no" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="背景/对面头像.jpg" type="image/jpeg" />
 <link rel="apple-touch-icon" href="背景/对面头像.jpg" />
@@ -17,9 +15,8 @@
 <style>
 :root{--ease:cubic-bezier(.22,.61,.36,1);--sw:320px}
 *{box-sizing:border-box}
-html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9}
-body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}
-body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9;touch-action:pan-x pan-y}
+body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
 .app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding:0;background:transparent;animation:fade .38s ease both}
 .av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580;overflow:hidden}
@@ -501,6 +498,14 @@ function setSide(o){
     Element.prototype.msRequestFullscreen = noop;
     Document.prototype.requestFullscreen = noop;
   } catch(e) {}
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      e.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
 })();
 
 function requestFullscreenFromGesture(){
