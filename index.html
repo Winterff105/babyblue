@@ -123,9 +123,6 @@ body.sel #selbar{display:flex;animation:fade .3s}
   .sidebar-backdrop.closed{opacity:0;visibility:hidden;pointer-events:none}
 }
 .lace-frame{position:fixed;inset:9px;pointer-events:none!important;border:1px solid rgba(255,255,255,.88);border-radius:8px;z-index:15}
-html.is-fullscreen,body.is-fullscreen{background-color:#f4f6f9!important}
-html.is-fullscreen .app,body.is-fullscreen .app{background-color:transparent!important}
-html.is-fullscreen .top,body.is-fullscreen .top{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56))!important}
 .lace-frame::before{content:"";position:absolute;inset:5px;pointer-events:none!important;border:9px solid transparent;border-radius:8px;background:radial-gradient(circle at 8px 8px,rgba(255,255,255,.94) 0 3px,transparent 3.5px) 0 0/16px 16px,linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) padding-box;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;padding:9px}
 @keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 @keyframes shine{50%{background-position:100% 50%}}
@@ -494,6 +491,17 @@ function setSide(o){
   $('#main').classList.toggle('collapsed',!o);
   if(backdrop)backdrop.classList.toggle('closed',!o);
 }
+
+(function disableAllFullscreen(){
+  const noop = () => Promise.reject(new Error("Fullscreen disabled"));
+  try {
+    Element.prototype.requestFullscreen = noop;
+    Element.prototype.webkitRequestFullscreen = noop;
+    Element.prototype.mozRequestFullScreen = noop;
+    Element.prototype.msRequestFullscreen = noop;
+    Document.prototype.requestFullscreen = noop;
+  } catch(e) {}
+})();
 
 function requestFullscreenFromGesture(){
   return Promise.resolve(false);
