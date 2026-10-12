@@ -19,15 +19,17 @@
 *{box-sizing:border-box}
 html{width:100%;height:100%;min-height:100%;margin:0;background:#f4f6f9}
 body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden;color:#3e454e;font:15px/1.6 Inter,"Segoe UI","Microsoft YaHei",Arial,sans-serif;background-color:#f4f6f9;background-image:linear-gradient(rgba(255,255,255,.76),rgba(244,246,249,.86)),url("背景/bb背景.png");background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}
+html:fullscreen,body:fullscreen{width:100%;height:100%;min-height:100%;background-color:#f4f6f9}
+html:-webkit-full-screen,body:-webkit-full-screen{width:100%;height:100%;min-height:100%;background-color:#f4f6f9}
 button{font:inherit;cursor:pointer}
 html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,[contenteditable=true]{-webkit-user-select:text;user-select:text}
-.app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:transparent;animation:fade .38s ease both}
+.app{position:relative;width:100%;height:100vh;height:100dvh;min-height:100%;display:grid;grid-template-rows:68px 1fr 72px;padding:0;background:transparent;animation:fade .38s ease both}
 .av{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:linear-gradient(145deg,#f3f5f8,#d3dae4);color:#6b7580;overflow:hidden}
 .av img{width:100%;height:100%;object-fit:cover;display:block}
 .ai .av{background:linear-gradient(145deg,#6b727c,#23272d);color:#f3f5f8}
-.top{position:relative;height:calc(68px + env(safe-area-inset-top));min-height:calc(68px + env(safe-area-inset-top));width:100%;display:flex;align-items:flex-end;justify-content:center;padding-top:env(safe-area-inset-top);padding-bottom:0;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
+.top{position:relative;height:68px;min-height:68px;width:100%;display:flex;align-items:center;justify-content:center;padding:0;border-bottom:1px solid rgba(220,225,232,.72);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:60}
 .title{margin:0;padding:0;text-align:center;color:#68737f;font-family:"Great Vibes","Snell Roundhand",cursive,sans-serif;font-size:34px;font-weight:400;line-height:1;text-shadow:0 1px 2px rgba(255,255,255,.9),0 4px 12px rgba(125,135,149,.15);pointer-events:none}
 #menu{position:absolute;left:16px;width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.86);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(218,224,232,.54));box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 12px 26px rgba(125,135,149,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#727c87;transition:opacity .22s ease,transform .22s ease}
 #menu:hover{opacity:.82;transform:translateY(-1px)}
@@ -125,6 +127,9 @@ body.sel #selbar{display:flex;animation:fade .3s}
   .sidebar-backdrop.closed{opacity:0;visibility:hidden;pointer-events:none}
 }
 .lace-frame{position:fixed;inset:9px;pointer-events:none!important;border:1px solid rgba(255,255,255,.88);border-radius:8px;z-index:15}
+html.is-fullscreen,body.is-fullscreen{background-color:#f4f6f9!important}
+html.is-fullscreen .app,body.is-fullscreen .app{background-color:transparent!important}
+html.is-fullscreen .top,body.is-fullscreen .top{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,248,253,.56))!important}
 .lace-frame::before{content:"";position:absolute;inset:5px;pointer-events:none!important;border:9px solid transparent;border-radius:8px;background:radial-gradient(circle at 8px 8px,rgba(255,255,255,.94) 0 3px,transparent 3.5px) 0 0/16px 16px,linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) padding-box;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;padding:9px}
 @keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 @keyframes shine{50%{background-position:100% 50%}}
@@ -506,14 +511,33 @@ async function requestFullscreenFromGesture(){
   }
 
   try{
+    document.documentElement.classList.add('fullscreen-requesting');
+
     await root.requestFullscreen({
       navigationUI:'hide'
     });
+
+    document.documentElement.classList.add('is-fullscreen');
+    document.body.classList.add('is-fullscreen');
     return true;
   }catch{
+    document.documentElement.classList.remove('fullscreen-requesting');
+    document.documentElement.classList.remove('is-fullscreen');
+    document.body.classList.remove('is-fullscreen');
     return false;
   }
 }
+
+document.addEventListener('fullscreenchange',()=>{
+  const active=Boolean(document.fullscreenElement);
+
+  document.documentElement.classList.toggle('is-fullscreen',active);
+  document.body.classList.toggle('is-fullscreen',active);
+
+  if(!active){
+    document.documentElement.classList.remove('fullscreen-requesting');
+  }
+});
 
 function bindFullscreenGesture(){
   const events=['pointerdown','touchstart','click'];
