@@ -1,0 +1,25 @@
+{
+  "name": "Welcome Archangel",
+  "short_name": "Archangel",
+  "description": "Welcome Archangel GitHub AI workspace",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "theme_color": "#eef2f6",
+  "background_color": "#f4f6f9",
+  "icons": [
+    {
+      "src": "背景/对面头像.jpg",
+      "type": "image/jpeg",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

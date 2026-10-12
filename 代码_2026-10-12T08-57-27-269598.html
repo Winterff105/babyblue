@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#eef2f6" />
+<meta name="background-color" content="#f4f6f9" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Welcome Archangel" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="背景/对面头像.jpg" type="image/jpeg" />
+<link rel="apple-touch-icon" href="背景/对面头像.jpg" />
 <title>Welcome Archangel</title>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 <style>
@@ -781,6 +790,21 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{if(e.key=='Escape'){clearMasks();exitSel()}});
 $('#send').onclick=send;$('#fetch').onclick=run;
 input.addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.isComposing){e.preventDefault();send()}});
+async function registerProgressiveWebApp(){
+  if(!('serviceWorker' in navigator)){
+    return;
+  }
+
+  try{
+    await navigator.serviceWorker.register('sw.js',{
+      scope:'./'
+    });
+  }catch(error){
+    toast('PWA 缓存注册失败');
+    console.error(error);
+  }
+}
+
 async function bootApplication(){
   if(!currentConversation){
     currentConversation=createConversation();
@@ -789,6 +813,7 @@ async function bootApplication(){
   renderConversationHistory();
   setSide(false);
   bindFullscreenGesture();
+  registerProgressiveWebApp();
 
   try{
     await openDatabase();
